@@ -161,7 +161,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       // Submit to webhook (configure your endpoint here)
       var webhook=leadForm.dataset.webhook||'';
       if(webhook){
-        fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData)})
+        fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData),keepalive:true})
           .catch(function(){});
       }
 
