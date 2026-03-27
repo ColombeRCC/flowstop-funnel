@@ -1,4 +1,3 @@
-
 // Sync ZIP code to hidden field
 document.getElementById('zip_code') && document.getElementById('zip_code').addEventListener('input', function(){
   var h = document.getElementById('zip_hidden');
@@ -110,7 +109,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
     });
   });
 
-  // --- ZIP code step — auto-advance when 5 digits entered ---
+  // --- ZIP code step --- auto-advance when 5 digits entered ---
   var zipInput=document.getElementById('zip_code');
   var zipNext=document.getElementById('zip-next');
   if(zipInput && zipNext){
@@ -146,7 +145,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
         }
       });
       var emailEl=document.getElementById('email');
-      if(emailEl && emailEl.value && !/^[^@]+@[^@]+\.[^@]+$/.test(emailEl.value)){
+      if(emailEl && emailEl.value && !/^[^@]+@[^@]+.[^@]+$/.test(emailEl.value)){
         emailEl.classList.add('error');
         valid=false;
       }
@@ -165,8 +164,9 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
           .catch(function(){});
       }
 
-      // Redirect to dedicated thank you page
-      window.location.href='https://freequote.flowstopfloodbarrier.com/thank-you/';
+      // Redirect to dedicated thank you page (use data-redirect on form for LP-specific URL)
+      var redirectUrl=leadForm.dataset.redirect||'https://freequote.flowstopfloodbarrier.com/thank-you/';
+      window.location.href=redirectUrl;
     });
 
     // Real-time error clear
@@ -175,4 +175,3 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
     });
   }
 })();
-
