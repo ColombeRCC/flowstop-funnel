@@ -1,3 +1,4 @@
+
 // Sync ZIP code to hidden field
 document.getElementById('zip_code') && document.getElementById('zip_code').addEventListener('input', function(){
   var h = document.getElementById('zip_hidden');
@@ -109,7 +110,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
     });
   });
 
-  // --- ZIP code step --- auto-advance when 5 digits entered ---
+  // --- ZIP code step — auto-advance when 5 digits entered ---
   var zipInput=document.getElementById('zip_code');
   var zipNext=document.getElementById('zip-next');
   if(zipInput && zipNext){
@@ -145,7 +146,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
         }
       });
       var emailEl=document.getElementById('email');
-      if(emailEl && emailEl.value && !/^[^@]+@[^@]+.[^@]+$/.test(emailEl.value)){
+      if(emailEl && emailEl.value && !/^[^@]+@[^@]+\.[^@]+$/.test(emailEl.value)){
         emailEl.classList.add('error');
         valid=false;
       }
@@ -173,5 +174,23 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
     leadForm.querySelectorAll('input').forEach(function(input){
       input.addEventListener('input',function(){this.classList.remove('error');});
     });
+
+    // iOS Safari fix: type="submit" buttons inside overflow-y:auto containers don't fire click reliably.
+    // touchend fires before iOS scroll-interception can cancel it. We use a tap-vs-scroll check (dy < 10px).
+    var submitBtn=leadForm.querySelector('.btn-submit');
+    if(submitBtn){
+      var _touchStartY=0;
+      submitBtn.addEventListener('touchstart',function(e){
+        _touchStartY=e.touches[0].clientY;
+      },{passive:true});
+      submitBtn.addEventListener('touchend',function(e){
+        var dy=Math.abs(e.changedTouches[0].clientY-_touchStartY);
+        if(dy<10){
+          e.preventDefault();
+          leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+        }
+      },{passive:false});
+    }
   }
 })();
+
