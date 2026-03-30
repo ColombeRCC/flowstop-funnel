@@ -10,6 +10,6 @@
   var styleEl = document.createElement('style'); styleEl.id = 'flowstop-miami-css'; styleEl.textContent = cssCode; document.head.appendChild(styleEl);
   var wrapper = document.createElement('div'); wrapper.id = 'flowstop-miami-page'; wrapper.innerHTML = pageHtml; document.body.insertBefore(wrapper, document.body.firstChild);
   var ovEl = document.createElement('div'); ovEl.innerHTML = ovHtml; document.body.appendChild(ovEl.firstElementChild);
-  var FUNNEL_JS_URL = 'https://cdn.jsdelivr.net/gh/ColombeRCC/flowstop-funnel@main/funnel.js';
+  var FUNNEL_JS_URL = 'https://cdn.jsdelivr.net/gh/ColombeRCC/flowstop-funnel@main/funnel.js?v=2';
   var scriptEl = document.createElement('script'); scriptEl.src = FUNNEL_JS_URL; document.head.appendChild(scriptEl);
 })();
