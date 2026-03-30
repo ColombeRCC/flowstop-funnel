@@ -36,11 +36,26 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
   var selections={};
 
   // --- Open overlay ---
+  var _scrollYWhenOpened=0;
   function openOverlay(startStep){
     currentStep=startStep||2;
     document.querySelector('.funnel-overlay').classList.add('active');
+    // iOS Safari fix: overflow:hidden on body is ignored by iOS — use position:fixed instead
+    // to prevent body scroll-interception from swallowing taps inside the overlay
+    _scrollYWhenOpened=window.scrollY||window.pageYOffset||0;
     document.body.style.overflow='hidden';
+    document.body.style.position='fixed';
+    document.body.style.top='-'+_scrollYWhenOpened+'px';
+    document.body.style.width='100%';
     showStep(currentStep);
+  }
+  function closeOverlay(){
+    document.querySelector('.funnel-overlay').classList.remove('active');
+    document.body.style.overflow='';
+    document.body.style.position='';
+    document.body.style.top='';
+    document.body.style.width='';
+    window.scrollTo(0,_scrollYWhenOpened);
   }
 
   // --- Show step ---
@@ -101,8 +116,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
     btn.addEventListener('click',function(){
       var to=parseInt(this.dataset.to);
       if(to<=1){
-        document.querySelector('.funnel-overlay').classList.remove('active');
-        document.body.style.overflow='';
+        closeOverlay();
         return;
       }
       currentStep=to;
