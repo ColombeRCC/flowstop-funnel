@@ -35,10 +35,13 @@
           loc_physical:p.get('loc_physical')||'',
           placement:p.get('placement')||'',
           lp_version:p.get('lp_version')||'LP4',
-          gclid:p.get('gclid')||''
+          gclid:p.get('gclid')||'',
+          fbclid:p.get('fbclid')||'',
+          msclkid:p.get('msclkid')||''
         };
       }
       var utms=getUTMs();
+      var landingPageUrl=window.location.href;
       document.querySelectorAll('[data-utm]').forEach(function(el){
         el.value=utms[el.getAttribute('data-utm')]||'';
       });
@@ -200,6 +203,7 @@
           new FormData(leadForm).forEach(function(v,k){formData[k]=v;});
           Object.assign(formData,selections);
           Object.assign(formData,utms);
+          formData.landing_page_url=landingPageUrl;
           // Normalize phone to E.164 (+1XXXXXXXXXX) for Dialpad/Pipedrive
           var rawPhoneSend=(formData.phone||'').replace(/\D/g,'');
           if(rawPhoneSend.length===11&&rawPhoneSend.charAt(0)==='1') rawPhoneSend=rawPhoneSend.slice(1);
