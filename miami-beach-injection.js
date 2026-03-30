@@ -34,7 +34,7 @@
           adgroupid:p.get('adgroupid')||'',
           loc_physical:p.get('loc_physical')||'',
           placement:p.get('placement')||'',
-          lp_version:p.get('lp_version')||'LP4',
+          lp_version:p.get('lp_version')||'LP-MB',
           gclid:p.get('gclid')||'',
           fbclid:p.get('fbclid')||'',
           msclkid:p.get('msclkid')||''
