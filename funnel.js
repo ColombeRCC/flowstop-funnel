@@ -200,8 +200,13 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       }
 
       // Redirect to dedicated thank you page (use data-redirect on form for LP-specific URL)
+      // Use anchor click instead of window.location.href — iOS blocks navigation from synthetic events
       var redirectUrl=leadForm.dataset.redirect||'https://freequote.flowstopfloodbarrier.com/thank-you/';
-      window.location.href=redirectUrl;
+      var a=document.createElement('a');
+      a.href=redirectUrl;
+      a.style.display='none';
+      document.body.appendChild(a);
+      a.click();
     });
 
     // Real-time error clear
