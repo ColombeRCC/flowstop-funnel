@@ -164,6 +164,22 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
         emailEl.classList.add('error');
         valid=false;
       }
+      // Phone: require valid US 10-digit number (blocks international numbers)
+      var phoneEl=document.getElementById('phone');
+      if(phoneEl){
+        var rawPhone=phoneEl.value.replace(/\D/g,'');
+        if(rawPhone.length===11&&rawPhone.charAt(0)==='1') rawPhone=rawPhone.slice(1);
+        var phoneErrEl=document.getElementById('phone-error-msg');
+        if(rawPhone.length!==10){
+          phoneEl.classList.add('error');
+          if(!phoneErrEl){phoneErrEl=document.createElement('p');phoneErrEl.id='phone-error-msg';phoneErrEl.style.cssText='color:#e53e3e;font-size:12px;margin:4px 0 0 0';phoneEl.parentNode.insertBefore(phoneErrEl,phoneEl.nextSibling);}
+          phoneErrEl.textContent='Please enter a valid 10-digit US phone number (e.g. 305-555-0100)';
+          valid=false;
+        } else {
+          phoneEl.classList.remove('error');
+          if(phoneErrEl) phoneErrEl.textContent='';
+        }
+      }
       if(!valid){return;}
 
       // Collect all data
@@ -171,6 +187,10 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       new FormData(leadForm).forEach(function(v,k){formData[k]=v;});
       Object.assign(formData,selections);
       Object.assign(formData,utms);
+      // Normalize phone to E.164 (+1XXXXXXXXXX) for Dialpad/Pipedrive
+      var rawPhoneSend=(formData.phone||'').replace(/\D/g,'');
+      if(rawPhoneSend.length===11&&rawPhoneSend.charAt(0)==='1') rawPhoneSend=rawPhoneSend.slice(1);
+      if(rawPhoneSend.length===10) formData.phone='+1'+rawPhoneSend;
 
       // Submit to webhook (configure your endpoint here)
       var webhook=leadForm.dataset.webhook||'';
@@ -186,20 +206,22 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
 
     // Real-time error clear
     leadForm.querySelectorAll('input').forEach(function(input){
-      input.addEventListener('input',function(){this.classList.remove('error');});
+      input.addEventListener('input',function(){
+        this.classList.remove('error');
+        if(this.id==='phone'){var m=document.getElementById('phone-error-msg');if(m)m.textContent='';}
+      });
     });
 
-    // iOS Safari fix: type="submit" buttons inside overflow-y:auto containers don't fire click reliably.
-    // touchend fires before iOS scroll-interception can cancel it. We use a tap-vs-scroll check (dy < 10px).
+    // iOS Safari fix: overflow-y:auto containers swallow taps after keyboard-induced viewport shifts.
+    // dy<10px check was too strict — keyboard shift makes even clean taps appear as >10px moves.
+    // Fix: check if touchend landed within the button's bounding rect instead (viewport-relative, so keyboard-safe).
     var submitBtn=leadForm.querySelector('.btn-submit');
     if(submitBtn){
-      var _touchStartY=0;
-      submitBtn.addEventListener('touchstart',function(e){
-        _touchStartY=e.touches[0].clientY;
-      },{passive:true});
       submitBtn.addEventListener('touchend',function(e){
-        var dy=Math.abs(e.changedTouches[0].clientY-_touchStartY);
-        if(dy<10){
+        var touch=e.changedTouches[0];
+        var rect=submitBtn.getBoundingClientRect();
+        if(touch.clientX>=rect.left&&touch.clientX<=rect.right&&
+           touch.clientY>=rect.top&&touch.clientY<=rect.bottom){
           e.preventDefault();
           leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
         }

@@ -225,17 +225,16 @@
           });
         });
     
-        // iOS Safari fix: type="submit" buttons inside overflow-y:auto containers don't fire click reliably.
-        // touchend fires before iOS scroll-interception can cancel it. We use a tap-vs-scroll check (dy < 10px).
+        // iOS Safari fix: overflow-y:auto containers swallow taps after keyboard-induced viewport shifts.
+        // dy<10px check was too strict — keyboard shift makes even clean taps appear as >10px moves.
+        // Fix: check if touchend landed within the button's bounding rect instead (viewport-relative, so keyboard-safe).
         var submitBtn=leadForm.querySelector('.btn-submit');
         if(submitBtn){
-          var _touchStartY=0;
-          submitBtn.addEventListener('touchstart',function(e){
-            _touchStartY=e.touches[0].clientY;
-          },{passive:true});
           submitBtn.addEventListener('touchend',function(e){
-            var dy=Math.abs(e.changedTouches[0].clientY-_touchStartY);
-            if(dy<10){
+            var touch=e.changedTouches[0];
+            var rect=submitBtn.getBoundingClientRect();
+            if(touch.clientX>=rect.left&&touch.clientX<=rect.right&&
+               touch.clientY>=rect.top&&touch.clientY<=rect.bottom){
               e.preventDefault();
               leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
             }
