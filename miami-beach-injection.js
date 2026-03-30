@@ -226,20 +226,16 @@
         });
     
         // iOS Safari fix: overflow-y:auto containers swallow taps on submit buttons.
-        // touch-action:none tells iOS not to intercept this element's touches for scroll detection.
-        // touchend then fires reliably. Bounds check ensures it's a tap, not a scroll.
+        // touch-action:none tells iOS not to use this touch for scroll/pan detection — any touchend
+        // on this element is therefore a deliberate tap. No bounds check needed (would fail anyway
+        // when the iOS keyboard dismisses mid-tap and shifts the viewport).
         var submitBtn=leadForm.querySelector('.btn-submit');
         if(submitBtn){
           submitBtn.style.touchAction='none';
           submitBtn.style.cursor='pointer';
           submitBtn.addEventListener('touchend',function(e){
-            var touch=e.changedTouches[0];
-            var rect=submitBtn.getBoundingClientRect();
-            if(touch.clientX>=rect.left&&touch.clientX<=rect.right&&
-               touch.clientY>=rect.top&&touch.clientY<=rect.bottom){
-              e.preventDefault();
-              leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
-            }
+            e.preventDefault();
+            leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
           },{passive:false});
         }
       }
