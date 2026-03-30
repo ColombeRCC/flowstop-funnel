@@ -230,18 +230,18 @@
           });
         });
     
-        // iOS Safari fix: overflow-y:auto containers swallow taps on submit buttons.
-        // touch-action:none tells iOS not to use this touch for scroll/pan detection — any touchend
-        // on this element is therefore a deliberate tap. No bounds check needed (would fail anyway
-        // when the iOS keyboard dismisses mid-tap and shifts the viewport).
+        // iOS Safari fix: change to type="button" + direct click handler.
+        // Avoids the touchend→dispatchEvent chain which iOS may block navigation from.
+        // type="button" prevents native form submit; click on type="button" with touch-action:none
+        // is treated as a first-class user interaction by iOS — navigation is allowed.
         var submitBtn=leadForm.querySelector('.btn-submit');
         if(submitBtn){
+          submitBtn.setAttribute('type','button');
           submitBtn.style.touchAction='none';
           submitBtn.style.cursor='pointer';
-          submitBtn.addEventListener('touchend',function(e){
-            e.preventDefault();
+          submitBtn.addEventListener('click',function(){
             leadForm.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
-          },{passive:false});
+          });
         }
       }
     })();
