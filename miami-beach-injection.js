@@ -247,3 +247,35 @@
     })();
   })();
 })();
+
+// ===== FIX TRACKING v3 — Capture click IDs dans le formulaire Unbounce natif =====
+// getUTMs() existant cible [data-utm] (champs injectés), PAS le form natif Unbounce.
+// Ce script crée gclid/fbclid/msclkid/landing_page_url dans le form natif au chargement.
+(function() {
+  function ensureAndFill(form, name, value) {
+    var el = form.querySelector('input[name="' + name + '"]');
+    if (!el) {
+      el = document.createElement('input');
+      el.type = 'hidden';
+      el.name = name;
+      el.id = name;
+      form.appendChild(el);
+    }
+    el.value = value || '';
+  }
+
+  function captureClickIds() {
+    var form = document.querySelector('form');
+    if (!form) return;
+    var p = new URLSearchParams(window.location.search);
+    ensureAndFill(form, 'gclid', p.get('gclid') || '');
+    ensureAndFill(form, 'fbclid', p.get('fbclid') || '');
+    ensureAndFill(form, 'msclkid', p.get('msclkid') || '');
+    ensureAndFill(form, 'landing_page_url', window.location.href);
+  }
+
+  if (document.readyState !== 'loading') { captureClickIds(); }
+  else { document.addEventListener('DOMContentLoaded', captureClickIds); }
+  setTimeout(captureClickIds, 500);
+  setTimeout(captureClickIds, 1500);
+})();
