@@ -225,11 +225,13 @@
           });
         });
     
-        // iOS Safari fix: overflow-y:auto containers swallow taps after keyboard-induced viewport shifts.
-        // dy<10px check was too strict — keyboard shift makes even clean taps appear as >10px moves.
-        // Fix: check if touchend landed within the button's bounding rect instead (viewport-relative, so keyboard-safe).
+        // iOS Safari fix: overflow-y:auto containers swallow taps on submit buttons.
+        // touch-action:none tells iOS not to intercept this element's touches for scroll detection.
+        // touchend then fires reliably. Bounds check ensures it's a tap, not a scroll.
         var submitBtn=leadForm.querySelector('.btn-submit');
         if(submitBtn){
+          submitBtn.style.touchAction='none';
+          submitBtn.style.cursor='pointer';
           submitBtn.addEventListener('touchend',function(e){
             var touch=e.changedTouches[0];
             var rect=submitBtn.getBoundingClientRect();
