@@ -22,7 +22,9 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       loc_physical:p.get('loc_physical')||'',
       placement:p.get('placement')||'',
       lp_version:p.get('lp_version')||'LP4',
-      gclid:p.get('gclid')||''
+      gclid:p.get('gclid')||'',
+      fbclid:p.get('fbclid')||'',
+      msclkid:p.get('msclkid')||''
     };
   }
   var utms=getUTMs();
