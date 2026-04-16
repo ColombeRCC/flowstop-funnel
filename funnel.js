@@ -9,7 +9,7 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
   // --- UTM Capture ---
   function getUTMs(){
     var p=new URLSearchParams(window.location.search);
-    return {
+    return 
       utm_source:p.get('utm_source')||'',
       utm_medium:p.get('utm_medium')||'',
       utm_campaign:p.get('utm_campaign')||'',
@@ -201,6 +201,14 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
           .catch(function(){});
       }
 
+// Store name+email in sessionStorage for Calendly prefill on thank-you page
+      try {
+        sessionStorage.setItem('fs_prefill', JSON.stringify({
+          name: ((formData.first_name || '') + ' ' + (formData.last_name || '')).trim(),
+          email: formData.email || ''
+        }));
+      } catch(e) {}
+      
       // Redirect to dedicated thank you page (use data-redirect on form for LP-specific URL)
       // Use anchor click instead of window.location.href — iOS blocks navigation from synthetic events
       var redirectUrl=leadForm.dataset.redirect||'https://freequote.flowstopfloodbarrier.com/thank-you/';
