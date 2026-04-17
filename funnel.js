@@ -194,6 +194,10 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       if(rawPhoneSend.length===11&&rawPhoneSend.charAt(0)==='1') rawPhoneSend=rawPhoneSend.slice(1);
       if(rawPhoneSend.length===10) formData.phone='+1'+rawPhoneSend;
 
+      // SMS opt-in checkbox (TCPA compliance)
+      var smsCheckbox=document.getElementById('sms_opt_in');
+      formData.sms_opt_in=smsCheckbox&&smsCheckbox.checked?'true':'false';
+
       // Submit to webhook (configure your endpoint here)
       var webhook=leadForm.dataset.webhook||'';
       if(webhook){
