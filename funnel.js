@@ -198,6 +198,9 @@ document.getElementById('zip_code') && document.getElementById('zip_code').addEv
       var smsCheckbox=document.getElementById('sms_opt_in');
       formData.sms_opt_in=smsCheckbox&&smsCheckbox.checked?'true':'false';
 
+      // Landing page URL (TCPA consent source + analytics)
+      formData.landing_page_url=window.location.href;
+
       // Submit to webhook (configure your endpoint here)
       var webhook=leadForm.dataset.webhook||'';
       if(webhook){
